@@ -1,0 +1,115 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}AutoMerge{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<!-- 引入bootstrap样式 -->
+<link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<!-- 引入bootstrap-table样式 -->
+<link href="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.css" rel="stylesheet">
+<!-- jquery -->
+<script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<!-- bootstrap-table.min.js -->
+<script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+<!-- 引入中文语言包 -->
+<script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js"></script>
+{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">AutoMerge</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">Home</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="info">
+        <h4><font face="verdana" style="color:green">使用说明：</font></h4>
+        <p style="font-family:verdana;color:green">
+        * Release Branch在不填写时会将项目的master分支与未上线分支进行校验，如有差异会将master合并到对应未上线分支
+        </p>
+    </div>
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ moment.include_moment() }}
+
+<script>
+      var abc = $('#table');
+      abc.bootstrapTable({
+        //method: 'post',
+        //url: '/api/merge/',
+        //dataType: "json",
+        columns: [{
+            field: 'id',
+            title: 'NO.'
+        }, {
+            field: 'project',
+            title: 'Project'
+        }, {
+            field: 'open',
+            title: 'Opened'
+        }, {
+            field: 'branch',
+            title: 'Release Branch'
+        }, {
+            field: 'result',
+            title: 'Result'
+        }
+        ]
+      });
+
+      var convert_FormData_to_json = function (formData) {
+            var objData = {};
+            for (var entry of formData.entries()){objData[entry[0]] = entry[1];}
+            return JSON.stringify(objData);
+        };
+
+        var formobj = document.querySelector('form');
+        //var formobj = document.getElementByTag('form');
+        formobj.addEventListener('submit', function(event){
+            event.preventDefault();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/merge/');
+
+            xhr.setRequestHeader('Content-Type', 'application/json'); // （前端）声明json格式
+            xhr.send(convert_FormData_to_json(new FormData(formobj)));// （前端）发送json数据
+            xhr.addEventListener('loadend', function() {
+                if(xhr.status == 200){
+                    var result = JSON.parse(xhr.responseText);          // （前端）处理接收的json数据
+                    abc.bootstrapTable('load', result);
+                    //abc.bootstrapTable('load', [result]);  //如果返回的不是list，是dict，就需要加[]
+                }
+            }, false);
+        }, false);
+  </script>
+{% endblock %}

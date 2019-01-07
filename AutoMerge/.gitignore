@@ -1,0 +1,5 @@
+**/.idea
+**/reports
+
+**/__pycache__
+**/logs
