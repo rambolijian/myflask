@@ -20,11 +20,11 @@ RESTPLUS_ERROR_404_HELP = False
 # SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # SQLAlchemy settings
-SQLALCHEMY_DATABASE_URI = 'mysql://root:HouBank2018aa!@192.168.13.116/qa_db'
+SQLALCHEMY_DATABASE_URI = 'mysql://root:***2018aa!@192.168.13.116/qa_db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # gitlab access info
-GITLAB_HOST = 'https://code.houbank.net/'
+GITLAB_HOST = 'https://code.***.net/'
 # my account token
 # GITLAB_TOKEN = 'UifdHbUH-jggx7XhG2Do'
 #automerge account token
@@ -35,4 +35,4 @@ DB_HOST = "192.168.13.116"
 # DB_NAME = "qa_hbtc"
 DB_NAME = "qa_db"
 DB_USER = "root"
-DB_PASSWORD = "HouBank2018aa!"
+DB_PASSWORD = "******2018aa!"
